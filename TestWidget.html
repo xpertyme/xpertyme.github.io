@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Test widget page</h1>
+
+  <h2>Injection via script</h2>
+  <div id="someContainerIdFromDom"></div>
+  <script>
+    const html = `
+      <booking-form data-locale="en"
+                    data-platform-id="MDT"
+                    data-api-url="https://www.medityme.com"
+                    data-expert-calendar-uuid="08b335b1-0caa-424a-beb9-4d904c9a5c3a"
+                    data-widget-collapsed="false"
+                    data-widget-color-scheme="red"
+                    data-widget-box-shadow-enabled="true"
+                    data-widget-border-radius="10px"></booking-form>
+
+      <script src="https://widgets.xpertyme.com/expert-online-booking-form/widget.js"><\/script>
+    `;
+    const scriptEl = document.createRange().createContextualFragment(html);
+    document.querySelector('#someContainerIdFromDom').append(scriptEl);
+  </script>
+</body>
+</html>
