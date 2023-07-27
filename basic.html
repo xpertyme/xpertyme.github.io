@@ -1,0 +1,175 @@
+<html>
+  <head></head>
+  <body>
+    <div id='myPublisherDiv'></div>
+    <div style="height:600px; width:800px" id='subscribersDiv'></div>
+    <button onclick="disconnectSession()">disconnect session</button>
+
+
+
+    <script src='https://static.opentok.com/v2/js/opentok.min.js'></script>
+
+    <script>
+
+//OT.setLogLevel(OT.NONE);
+      var publisher;
+      var apiKey = '';
+      var sessionId = '1_MX40NzYxMDIxMX5-MTY4MDA2MjE0NDQ4MX5xWkpnYVlzQ1c2NytnQnNtbWNkMDRTMFZ-fn4'; // add your OpenTok Session ID
+      var token= '='; // add your OpenTok token
+
+
+      var subscriber;
+      //var frontDeviceId;
+      var publisher;
+      var stream;
+
+      var session = OT.initSession(apiKey, sessionId, {ipWhitelist :true});
+    //  OT.initSession(apiKey, sessionId, {ipWhitelist :'true'});
+
+    var subscriberOptions = {
+      insertMode: 'append',
+      width: '100%',
+      height: '100%'
+    };
+
+
+      session.on({
+          sessionReconnecting: function(event) {
+          console.log("sessionReconnecting called");
+          }
+      });
+
+      session.on({
+        sessionReconnected: function(event) {
+        console.log("sessionReconnected called");
+        }
+      });
+      session.on({
+        sessionDisconnected: function(event) {
+        //  event.preventDefault();
+        console.log("session.sessionDisconnected called");
+        }
+      });
+
+      session.on({
+        connectionCreated: function(event) {
+          if (event.connection.connectionId != session.connection.connectionId) {
+        console.log("connectionCreated called");
+
+      }
+        }
+      });
+
+
+      OT.on({
+        exception: function(exception) {
+        console.log("Opentok exception occurred " + exception.title + exception.message);
+        }
+      });
+
+      session.on({
+        connectionDestroyed: function(event) {
+        console.log("connectionDestroyed called");
+        }
+      });
+
+      session.on("streamPropertyChanged", function (event) {
+          console.log("stream property changed " + event.changedProperty);
+          console.log("old value " + event.oldValue);
+          console.log("new value " + event.newValue);
+
+      });
+
+      session.on({
+          streamCreated: function(event) {
+
+            console.log("stream created called");
+          subscriber =  session.subscribe(event.stream, 'subscribersDiv', subscriberOptions);
+
+          subscriber.on({
+            disconnected: function() {
+              console.log("subscriber disconnected. Reason: " + event.reason);
+            }
+          });
+
+            subscriber.on({
+              connected: function() {
+                console.log("subscriber connected. Reason: " + event.reason);
+
+              }
+            });
+            subscriber.on("videoEnabled", function(event) {
+              console.log("subscriber disabled. Reason: " + event.reason);
+            });
+              subscriber.on({
+                destroyed: function() {
+                  console.log("subscriber destroyed. Reason: " + event.reason);
+                }
+              });
+
+
+
+          }
+      });
+
+
+      function handleError(error) {
+        if (error) {
+        //  alert(error.message);
+        }
+      }
+
+        publisher = OT.initPublisher('myPublisherDiv', function (error) {
+    if (error) {
+    //  console.log("Failed to publish: ", error.code + "----" + error.name + "------" + error.message);
+      if (error.name === "OT_NOT_CONNECTED") {
+        alert("You are not connected to the internet. Check your network connection.");
+      }
+    } else {
+    //  console.log("Connected");
+  //    frontDeviceId = publisher.getVideoSource().deviceId;
+    }
+  });
+
+
+  session.connect(token, function(error) {
+    if (error) {
+      console.log("Failed connect" + error.code + error.message);
+    } else {
+      console.log("session is connected to " + session.sessionInfo.mediaServerName);
+session.publish(publisher, handleError);
+    }
+  });
+
+          publisher.on('mediaStopped', function (event) {
+                  console.log("screensharing stopped " + event.reason);
+    });
+
+    publisher.on('streamCreated', function (event) {
+       console.log('The publisher started streaming.');
+    });
+
+    session.on("signal", function(event) {
+
+          console.log("Signal sent from connection " + event.data + "-- " + session.connection.id + "from--- " + event.from.connectionId);
+          // Process the event.data property, if there is any data.
+        });
+
+     publisher.on("streamDestroyed", function (event) {
+    //   event.preventDefault();
+    if(event.reason == 'networkDisconnected')
+      console.log("Publisher Stream stopped. Reason: " + event.reason);
+    });
+
+    session.on("streamDestroyed", function (event) {
+      console.log("session object Stream stopped. Reason: " + event.reason);
+    });
+
+    function disconnectSession()
+    {
+
+      session.disconnect();
+    }
+
+                                       </script>
+                                       </html>
