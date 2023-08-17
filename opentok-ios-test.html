@@ -32,10 +32,9 @@
         var apiKey = '';
         var sessionId = ''; // add your OpenTok Session ID
         var token = ''; // add your OpenTok token
-        var savedDeviceId = sessionStorage.getItem("deviceId");
-        alert('deviceId from storage ' + savedDeviceId);
         var pubOptions = {
-            "videoSource": savedDeviceId || videoInputDevices[0].deviceId
+            "videoSource": videoInputDevices[0].deviceId,
+            "audioSource": audioInputDevices[0].deviceId,
 
         };
         alert(JSON.stringify(pubOptions));
@@ -160,16 +159,6 @@
             } else {
                 //  console.log("Connected");
                 frontDeviceId = publisher.getVideoSource().deviceId;
-                sessionStorage.setItem("deviceId", frontDeviceId);
-
-                const button = document.getElementById("changeCamera");
-
-                button.addEventListener("click", function() {
-                    publisher.cycleVideo().then(function () {
-                        frontDeviceId = publisher.getVideoSource().deviceId;
-                        sessionStorage.setItem("deviceId", frontDeviceId);
-                    })
-                });
             }
         });
 
