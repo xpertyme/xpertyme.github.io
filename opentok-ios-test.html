@@ -165,7 +165,10 @@
                 const button = document.getElementById("changeCamera");
 
                 button.addEventListener("click", function() {
-                    publisher.cycleVideo();
+                    publisher.cycleVideo().then(function () {
+                        frontDeviceId = publisher.getVideoSource().deviceId;
+                        sessionStorage.setItem("deviceId", frontDeviceId);
+                    })
                 });
             }
         });
