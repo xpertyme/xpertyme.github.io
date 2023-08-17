@@ -24,6 +24,7 @@
         }
         for (i = 0; i < videoInputDevices.length; i++) {
             console.log("video input device: ", videoInputDevices[i].deviceId);
+            alert(videoInputDevices[i].deviceId)
         }
 
         //OT.setLogLevel(OT.NONE);
@@ -34,9 +35,10 @@
 
 
         var pubOptions = {
-            "videoSource": videoInputDevices[0].deviceId
+            "videoSource": videoInputDevices[1].deviceId
 
         };
+        alert(JSON.stringify(pubOptions));
 
         var subscriber;
         var frontDeviceId;
