@@ -35,9 +35,10 @@
 
 
         var pubOptions = {
-            "videoSource": videoInputDevices[1].deviceId
+            "videoSource": videoInputDevices[0].deviceId
 
         };
+        alert(JSON.stringify(videoInputDevices))
         alert(JSON.stringify(pubOptions));
 
         var subscriber;
