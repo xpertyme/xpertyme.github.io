@@ -24,7 +24,7 @@
         }
         for (i = 0; i < videoInputDevices.length; i++) {
             console.log("video input device: ", videoInputDevices[i].deviceId);
-            alert(videoInputDevices[i].deviceId)
+            alert(videoInputDevices[i])
         }
 
         //OT.setLogLevel(OT.NONE);
@@ -32,13 +32,12 @@
         var apiKey = '';
         var sessionId = ''; // add your OpenTok Session ID
         var token = ''; // add your OpenTok token
-
-
+        var savedDeviceId = sessionStorage.getItem("deviceId");
+        alert(savedDeviceId);
         var pubOptions = {
-            "videoSource": videoInputDevices[0].deviceId
+            "videoSource": savedDeviceId || videoInputDevices[0].deviceId
 
         };
-        alert(JSON.stringify(videoInputDevices))
         alert(JSON.stringify(pubOptions));
 
         var subscriber;
@@ -161,6 +160,7 @@
             } else {
                 //  console.log("Connected");
                 frontDeviceId = publisher.getVideoSource().deviceId;
+                sessionStorage.setItem("deviceId", frontDeviceId);
                 alert(frontDeviceId);
             }
         });
