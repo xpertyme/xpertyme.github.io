@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #callScreenWidgetContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            max-height: 100%;
+        }
+        .conference-form {
+            padding-left: 30px;
+        }
+        .conference-form label {
+            display: inline-block;
+            margin-block: 5px;
+            width: 250px;
+        }
+        .conference-form #sessionTitle {
+            width: 420px;
+        }
+        .conference-form select {
+            margin-bottom: 20px;
+        }
+        .conference-form-container {
+            display: flex;
+
+            #videoSessionForm, .created-session-json {
+                width: 50%;
+            }
+            .created-session-json {
+                display: flex;
+                align-items: center;
+                padding-left: 60px;
+            }
+        }
+        input {
+            width: 250px;
+        }
+        #conferenceForm {
+            padding-bottom: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="conference-form-container">
+    <form class="conference-form" id="videoSessionForm">
+        <h1>Create Video Session</h1>
+        <label for="startDate">Start Date:</label>
+        <input type="datetime-local" id="startDate" name="startDate" required><br><br>
+
+        <label for="hostUserUuid">Host User UUID:</label>
+        <input type="text" id="hostUserUuid" name="hostUserUuid" value="3fa85f64-5717-4562-b3fc-2c963f66afa6" required><br><br>
+
+        <label for="type">Event Type:</label>
+        <select id="type" name="type" required>
+            <option value="conference">Conference</option>
+            <option value="webinar">Webinar</option>
+            <option value="oneToOne">One-to-One</option>
+        </select><br>
+
+        <label for="duration">Duration (seconds):</label>
+        <input type="number" id="duration" name="duration" value="3600" required><br><br>
+
+        <input type="submit" value="Create">
+    </form>
+    <div class="created-session-json">
+        <pre id="createdSessionJson"></pre>
+    </div>
+</div>
+<div class="conference-form-container">
+    <form class="conference-form" id="createParticipantForm">
+        <h1>Create Participant</h1>
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+            <option value="participant">participant</option>
+            <option value="speaker">speaker</option>
+            <option value="moderator">moderator</option>
+        </select>
+        <br>
+        <label for="displayName">Display Name:</label>
+        <input type="text" id="displayName" name="displayName" value="Participant name"><br><br>
+        <label for="userUuid">User UUID (should be different for all invited users):</label>
+        <input type="text" id="userUuid" name="userUuid" value="3fa85f64-5717-4562-b3fc-2c963f66afa7" required><br><br>
+        <label for="videoSession">Video Session ID:</label>
+        <input type="text" id="videoSession" name="duration" required><br><br>
+
+        <input type="submit" value="Create">
+    </form>
+    <div class="created-session-json">
+        <pre id="createdParticipantJson"></pre>
+    </div>
+</div>
+<form class="conference-form" id="conferenceForm">
+    <h1>Setup call screen widget</h1>
+    <label for="platformId">Platform ID:</label>
+    <select id="platformId" name="platformId" required>
+        <option value="TMB">TMB</option>
+    </select>
+    <br>
+
+    <label for="locale">Locale:</label>
+    <select id="locale" name="locale" required>
+        <option value="en">English</option>
+        <option value="de">German</option>
+    </select>
+    <br>
+
+    <label for="primaryColor">Primary Color:</label>
+    <input type="color" id="primaryColor" name="primaryColor" value="#f55f44" required><br><br>
+
+    <label for="waitingRoomBackgroundColor">Waiting Room Background Color:</label>
+    <input type="color" id="waitingRoomBackgroundColor" name="waitingRoomBackgroundColor" value="#b0d1d5" required><br><br>
+
+    <label for="authToken">Auth Token:</label>
+    <input type="text" id="authToken" name="authToken"><br><br>
+
+    <label for="participantId">Participant ID:</label>
+    <input type="text" id="participantId" name="participantId" required><br><br>
+
+    <label for="sessionId">Video session ID:</label>
+    <input type="text" id="sessionId" name="sessionId" required><br><br>
+
+    <label for="sessionTitle">Session Title:</label>
+    <input type="text" id="sessionTitle" name="sessionTitle" value="CardioBlitz: High-Intensity Cardio Workouts and Conditioning" required><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+<!--Widget container-->
+<div id="callScreenWidgetContainer"></div>
+
+<script>
+    function messageHandler(event) {
+        const container = document.querySelector('#callScreenWidgetContainer');
+        // Check the message type
+        if (event.data && event.data.type === 'CALL_SCREEN_WIDGET_CLOSED') {
+            // get widget tag
+            const callScreenEl = document.querySelector('#callScreen');
+            // Remove the element
+            callScreenEl.remove();
+            // hide widget container
+            container.style.display = 'none';
+            container.innerHTML = '';
+
+            window.removeEventListener('message', messageHandler);
+        }
+    }
+
+    function injectWidget(
+        platformId,
+        locale,
+        primaryColor,
+        waitingRoomBackgroundColor,
+        authToken,
+        participantId,
+        sessionId,
+        sessionTitle
+    ) {
+        const speakersList = JSON.stringify([
+            // interface [{fullName: 'User User', imageUrl: 'someUrl'}]
+        ]).replace(/"/g, '&quot;'); // need to replace quotes "" to &quot;
+
+        // build html
+        const html = `
+                <call-screen id="callScreen"
+                             data-auth-token="${authToken}"
+                             data-platform-id="${platformId}"
+                             data-locale="${locale}"
+                             data-primary-color="${primaryColor}"
+                             data-waiting-room-background-color="${waitingRoomBackgroundColor}"
+                             data-session-title="${sessionTitle}"
+                             data-session-id="${sessionId}"
+                             data-speakers-list="${speakersList}"
+                             data-participant-id="${participantId}"
+                ></call-screen>
+
+                <script src="https://widgets.k8s.xpertyme.com/call-screen/widget.js"><\/script>
+<!--                <script src="https://call-screen-widget-host.sm.vpn.dev.xpertyme.com/call-screen-widget.js"><\/script>-->
+            `;
+        // inject html into DOM
+        const widgetHtml = document.createRange().createContextualFragment(html);
+        const container = document.querySelector('#callScreenWidgetContainer');
+        container.append(widgetHtml);
+        container.style.display = 'block';
+
+        window.addEventListener('message', messageHandler);
+    }
+
+    function initInjectWidgetFormSubmitListener() {
+        document.getElementById("conferenceForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            // Get form input values
+            const platformId = document.getElementById("platformId").value;
+            const locale = document.getElementById("locale").value;
+            const primaryColor = document.getElementById("primaryColor").value;
+            const waitingRoomBackgroundColor = document.getElementById("waitingRoomBackgroundColor").value;
+            const authToken = document.getElementById("authToken").value;
+            const participantId = document.getElementById("participantId").value;
+            const sessionId = document.getElementById("sessionId").value;
+            const sessionTitle = document.getElementById("sessionTitle").value;
+
+            injectWidget(
+                platformId,
+                locale,
+                primaryColor,
+                waitingRoomBackgroundColor,
+                authToken,
+                participantId,
+                sessionId,
+                sessionTitle
+            );
+        });
+    }
+    initInjectWidgetFormSubmitListener();
+
+    function initVideoSessionFormSubmitListener() {
+        document.getElementById('videoSessionForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            const startDate = new Date(document.getElementById("startDate").value).toISOString();
+            const hostUserUuid = document.getElementById("hostUserUuid").value;
+            const type = document.getElementById("type").value;
+            const duration = +document.getElementById("duration").value;
+
+            fetch('https://call-api.dev.xpertyme.com/video_sessions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "startDate": startDate,
+                    "sessionOptions": {
+                        "chatEnabled": true,
+                        "archivingEnabled": true,
+                        "screenShareEnabled": true,
+                        "questionAreaEnabled": true
+                    },
+                    "hostUserUuid": hostUserUuid,
+                    "type": type,
+                    "duration": duration
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("videoSession").value = data.id;
+                    document.getElementById("sessionId").value = data.id;
+                    document.getElementById("participantId").value = data.participants[0].id;
+                    document.getElementById("createdSessionJson").textContent = JSON.stringify({
+                        sessionId: data.id,
+                        participantId: data.participants[0].id,
+                        type: data.type,
+                    }, undefined, 2);
+                    console.log(data);
+                    // You can handle the response data here
+                })
+                .catch(error => {
+                    console.error('Error creating event:', error);
+                });
+        });
+    }
+    initVideoSessionFormSubmitListener();
+
+    function initCreateParticipantFormSubmitListener() {
+        document.getElementById('createParticipantForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            const role = document.getElementById("role").value;
+            const displayName = document.getElementById("displayName").value;
+            const userUuid = document.getElementById("userUuid").value;
+            const videoSession = document.getElementById("videoSession").value;
+
+            fetch('https://call-api.dev.xpertyme.com/video_sessions/participants', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "role": role,
+                    "displayName": displayName,
+                    "userUuid": userUuid,
+                    "videoSession": `/video_sessions/${videoSession}`
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("createdParticipantJson").textContent = JSON.stringify(data, undefined, 2);
+                    console.log(data);
+                    // You can handle the response data here
+                })
+                .catch(error => {
+                    console.error('Error creating event:', error);
+                });
+        });
+    }
+    initCreateParticipantFormSubmitListener();
+</script>
+</body>
+</html>
