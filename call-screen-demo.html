@@ -62,9 +62,13 @@
         #conferenceForm {
             padding-bottom: 100px;
         }
+        #downloadButton {
+            margin: 20px 0 0 33px;
+        }
     </style>
 </head>
 <body>
+<button id="downloadButton">Download This Page</button>
 <div class="conference-form-container">
     <form class="conference-form" id="videoSessionForm">
         <h1>Create Video Session</h1>
@@ -190,6 +194,21 @@
         currentURLWithoutQuery += `?videoSessionId=${videoSessionId}&participantId=${createdParticipantId || ''}`;
 
         copyText(currentURLWithoutQuery);
+    });
+
+    const downloadButton = document.getElementById('downloadButton');
+
+    downloadButton.addEventListener('click', function() {
+        const pageContent = document.documentElement.outerHTML;
+        const blob = new Blob([pageContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'call-screen-demo.html';
+        a.click();
+
+        URL.revokeObjectURL(url);
     });
 
     function updateUrlQueryParams(videoSessionId, participantId) {
