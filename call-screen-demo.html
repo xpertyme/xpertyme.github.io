@@ -68,6 +68,7 @@
 <div class="conference-form-container">
     <form class="conference-form" id="videoSessionForm">
         <h1>Create Video Session</h1>
+        <h3>Host participant will be created together with video session</h3>
         <label for="startDate">Start Date:</label>
         <input type="datetime-local" id="startDate" name="startDate" required><br><br>
 
@@ -111,6 +112,7 @@
     </form>
     <div class="created-session-json">
         <pre id="createdParticipantJson"></pre>
+        <button id="copyInviteLinkBtn">Copy invite link</button>
     </div>
 </div>
 <form class="conference-form" id="conferenceForm">
@@ -140,8 +142,8 @@
     <label for="participantId">Participant ID:</label>
     <input type="text" id="participantId" name="participantId" required><br><br>
 
-    <label for="sessionId">Video session ID:</label>
-    <input type="text" id="sessionId" name="sessionId" required><br><br>
+    <label for="videoSessionId">Video session ID:</label>
+    <input type="text" id="videoSessionId" name="videoSessionId" required><br><br>
 
     <label for="sessionTitle">Session Title:</label>
     <input type="text" id="sessionTitle" name="sessionTitle" value="CardioBlitz: High-Intensity Cardio Workouts and Conditioning" required><br><br>
@@ -152,6 +154,58 @@
 <div id="callScreenWidgetContainer"></div>
 
 <script>
+    let createdParticipantId;
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if (
+        urlParams.get('participantId')?.length
+        && urlParams.get('videoSessionId')?.length
+    ) {
+        document.getElementById("videoSessionId").value = urlParams.get('videoSessionId');
+        document.getElementById("participantId").value = urlParams.get('participantId');
+    }
+
+
+    function copyText(val){
+        const selBox = document.createElement('textarea');
+        selBox.style.position = 'fixed';
+        selBox.style.left = '0';
+        selBox.style.top = '0';
+        selBox.style.opacity = '0';
+        selBox.value = val;
+        document.body.appendChild(selBox);
+        selBox.focus();
+        selBox.select();
+        document.execCommand('copy');
+        document.body.removeChild(selBox);
+    }
+
+    const button = document.getElementById('copyInviteLinkBtn');
+
+    button.addEventListener('click', function() {
+        const videoSessionId = document.getElementById("videoSessionId").value;
+        let currentURLWithoutQuery = window.location.origin + window.location.pathname;
+        currentURLWithoutQuery += `?videoSessionId=${videoSessionId}&participantId=${createdParticipantId || ''}`;
+
+        copyText(currentURLWithoutQuery);
+    });
+
+    function updateUrlQueryParams(videoSessionId, participantId) {
+        // Get the current query parameters
+        const queryParams = new URLSearchParams(window.location.search);
+
+        // Add new query parameters
+        queryParams.set('videoSessionId', videoSessionId);
+        queryParams.set('participantId', participantId);
+
+        // Create the new URL with the updated query parameters
+        const newURL = window.location.origin + window.location.pathname + '?' + queryParams.toString();
+
+        // Use pushState to update the URL without reloading the page
+        window.history.pushState({}, '', newURL);
+    }
+
     function messageHandler(event) {
         const container = document.querySelector('#callScreenWidgetContainer');
         // Check the message type
@@ -175,7 +229,7 @@
         waitingRoomBackgroundColor,
         authToken,
         participantId,
-        sessionId,
+        videoSessionId,
         sessionTitle
     ) {
         const speakersList = JSON.stringify([
@@ -191,13 +245,12 @@
                              data-primary-color="${primaryColor}"
                              data-waiting-room-background-color="${waitingRoomBackgroundColor}"
                              data-session-title="${sessionTitle}"
-                             data-session-id="${sessionId}"
+                             data-video-session-id="${videoSessionId}"
                              data-speakers-list="${speakersList}"
                              data-participant-id="${participantId}"
                 ></call-screen>
 
                 <script src="https://widgets.k8s.xpertyme.com/call-screen/widget.js"><\/script>
-<!--                <script src="https://call-screen-widget-host.sm.vpn.dev.xpertyme.com/call-screen-widget.js"><\/script>-->
             `;
         // inject html into DOM
         const widgetHtml = document.createRange().createContextualFragment(html);
@@ -219,7 +272,7 @@
             const waitingRoomBackgroundColor = document.getElementById("waitingRoomBackgroundColor").value;
             const authToken = document.getElementById("authToken").value;
             const participantId = document.getElementById("participantId").value;
-            const sessionId = document.getElementById("sessionId").value;
+            const videoSessionId = document.getElementById("videoSessionId").value;
             const sessionTitle = document.getElementById("sessionTitle").value;
 
             injectWidget(
@@ -229,7 +282,7 @@
                 waitingRoomBackgroundColor,
                 authToken,
                 participantId,
-                sessionId,
+                videoSessionId,
                 sessionTitle
             );
         });
@@ -266,15 +319,16 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("videoSession").value = data.id;
-                    document.getElementById("sessionId").value = data.id;
+                    document.getElementById("videoSessionId").value = data.id;
                     document.getElementById("participantId").value = data.participants[0].id;
                     document.getElementById("createdSessionJson").textContent = JSON.stringify({
-                        sessionId: data.id,
+                        videoSessionId: data.id,
                         participantId: data.participants[0].id,
                         type: data.type,
                     }, undefined, 2);
+
+                    updateUrlQueryParams(data.id, data.participants[0].id);
                     console.log(data);
-                    // You can handle the response data here
                 })
                 .catch(error => {
                     console.error('Error creating event:', error);
@@ -306,7 +360,12 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("createdParticipantJson").textContent = JSON.stringify(data, undefined, 2);
+                    createdParticipantId = data.id;
+                    document.getElementById("createdParticipantJson").textContent = JSON.stringify({
+                        id: data.id,
+                        role: data.role,
+                        displayName: data.displayName,
+                    }, undefined, 2);
                     console.log(data);
                     // You can handle the response data here
                 })
