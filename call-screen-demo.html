@@ -227,18 +227,29 @@
     }
 
     function messageHandler(event) {
+        // get widget container element
         const container = document.querySelector('#callScreenWidgetContainer');
-        // Check the message type
-        if (event.data && event.data.type === 'CALL_SCREEN_WIDGET_CLOSED') {
-            // get widget tag
-            const callScreenEl = document.querySelector('#callScreen');
-            // Remove the element
-            callScreenEl.remove();
-            // hide widget container
-            container.style.display = 'none';
-            container.innerHTML = '';
+        // get widget element
+        const callScreenEl = document.querySelector('#callScreen');
+        const postMessageType = {
+            closed: 'CALL_SCREEN_WIDGET_SESSION_CLOSED', // close widget event
+            finished: 'CALL_SCREEN_WIDGET_SESSION_FINISHED' // session finished event
+        }
 
-            window.removeEventListener('message', messageHandler);
+        // Check the message type
+        switch (event.data?.type) {
+            case postMessageType.closed:
+            case postMessageType.finished:
+                // Remove the element
+                callScreenEl.remove();
+                // hide widget container
+                container.style.display = 'none';
+                container.innerHTML = '';
+
+                window.removeEventListener('message', messageHandler);
+                break;
+            default:
+                break;
         }
     }
 
