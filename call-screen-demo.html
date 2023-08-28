@@ -253,6 +253,33 @@
         }
     }
 
+    // get co-hosts(speakers and moderators) list
+    function getCoHosts(videoSession) {
+        fetch(`https://call-api.dev.xpertyme.com/video_sessions/${videoSessionsId}/co-hosts`, {
+            method: 'Get',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                const participant = data['coHosts'][0];
+
+                document.getElementById("videoSession").value = videoSession.id;
+                document.getElementById("videoSessionId").value = videoSession.id;
+                document.getElementById("participantId").value = participant.id;
+                document.getElementById("createdSessionJson").textContent = JSON.stringify({
+                    videoSessionId: videoSession.id,
+                    participantId: participant.id,
+                    type: videoSession.type,
+                }, undefined, 2);
+                updateUrlQueryParams(videoSession, participant.id);
+            })
+            .catch(error => {
+                console.error('Error get CoHosts:', error);
+            });
+    }
+
     function injectWidget(
         platformId,
         locale,
@@ -348,18 +375,9 @@
                 })
             })
                 .then(response => response.json())
-                .then(data => {
-                    document.getElementById("videoSession").value = data.id;
-                    document.getElementById("videoSessionId").value = data.id;
-                    document.getElementById("participantId").value = data.participants[0].id;
-                    document.getElementById("createdSessionJson").textContent = JSON.stringify({
-                        videoSessionId: data.id,
-                        participantId: data.participants[0].id,
-                        type: data.type,
-                    }, undefined, 2);
-
-                    updateUrlQueryParams(data.id, data.participants[0].id);
-                    console.log(data);
+                .then(videoSession => {
+                    getCoHosts(videoSession);
+                    console.log(videoSession);
                 })
                 .catch(error => {
                     console.error('Error creating event:', error);
