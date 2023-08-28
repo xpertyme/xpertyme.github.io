@@ -255,7 +255,7 @@
 
     // get co-hosts(speakers and moderators) list
     function getCoHosts(videoSession) {
-        fetch(`https://call-api.dev.xpertyme.com/video_sessions/${videoSessionsId}/co-hosts`, {
+        fetch(`https://call-api.dev.xpertyme.com/video_sessions/${videoSession.id}/co-hosts`, {
             method: 'Get',
             headers: {
                 'Content-Type': 'application/json'
