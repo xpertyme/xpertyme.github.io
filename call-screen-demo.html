@@ -273,7 +273,7 @@
                     participantId: participant.id,
                     type: videoSession.type,
                 }, undefined, 2);
-                updateUrlQueryParams(videoSession, participant.id);
+                updateUrlQueryParams(videoSession.id, participant.id);
             })
             .catch(error => {
                 console.error('Error get CoHosts:', error);
