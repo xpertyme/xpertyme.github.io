@@ -290,6 +290,7 @@
         videoSessionId,
         sessionTitle
     ) {
+        const apiDomainName = 'https://call-api.dev.xpertyme.com'; // for demo not needed (backend api domain dame)
         const speakersList = JSON.stringify([
             // interface [{fullName: 'User User', imageUrl: 'someUrl'}]
         ]).replace(/"/g, '&quot;'); // need to replace quotes "" to &quot;
@@ -306,6 +307,7 @@
                              data-video-session-id="${videoSessionId}"
                              data-speakers-list="${speakersList}"
                              data-participant-id="${participantId}"
+                             data-api-domain-name="${apiDomainName}"
                 ></call-screen>
 
                 <script src="https://widgets.k8s.xpertyme.com/call-screen/widget.js"><\/script>
