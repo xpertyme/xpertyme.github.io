@@ -121,8 +121,8 @@
 </div>
 <form class="conference-form" id="conferenceForm">
     <h1>Setup call screen widget</h1>
-    <label for="platformId">Platform ID:</label>
-    <select id="platformId" name="platformId" required>
+    <label for="layout">Layout:</label>
+    <select id="layout" name="layout" required>
         <option value="TMB">TMB</option>
     </select>
     <br>
@@ -281,7 +281,7 @@
     }
 
     function injectWidget(
-        platformId,
+        layout,
         locale,
         primaryColor,
         waitingRoomBackgroundColor,
@@ -299,7 +299,7 @@
         const html = `
                 <call-screen id="callScreen"
                              data-auth-token="${authToken}"
-                             data-platform-id="${platformId}"
+                             data-layout="${layout}"
                              data-locale="${locale}"
                              data-primary-color="${primaryColor}"
                              data-waiting-room-background-color="${waitingRoomBackgroundColor}"
@@ -326,7 +326,7 @@
             event.preventDefault(); // Prevent the default form submission behavior
 
             // Get form input values
-            const platformId = document.getElementById("platformId").value;
+            const layout = document.getElementById("layout").value;
             const locale = document.getElementById("locale").value;
             const primaryColor = document.getElementById("primaryColor").value;
             const waitingRoomBackgroundColor = document.getElementById("waitingRoomBackgroundColor").value;
@@ -336,7 +336,7 @@
             const sessionTitle = document.getElementById("sessionTitle").value;
 
             injectWidget(
-                platformId,
+                layout,
                 locale,
                 primaryColor,
                 waitingRoomBackgroundColor,
