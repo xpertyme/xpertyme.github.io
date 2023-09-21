@@ -107,6 +107,8 @@
         <br>
         <label for="displayName">Display Name:</label>
         <input type="text" id="displayName" name="displayName" value="Participant name"><br><br>
+        <label for="avatarUrl">Avatar url:</label>
+        <input type="text" id="avatarUrl" name="avatarUrl" value=""><br><br>
         <label for="userUuid">User UUID (should be different for all invited users):</label>
         <input type="text" id="userUuid" name="userUuid" value="3fa85f64-5717-4562-b3fc-2c963f66afa7" required><br><br>
         <label for="videoSession">Video Session ID:</label>
@@ -393,6 +395,7 @@
             event.preventDefault(); // Prevent the default form submission behavior
 
             const role = document.getElementById("role").value;
+            const avatarUrl = document.getElementById("avatarUrl").value;
             const displayName = document.getElementById("displayName").value;
             const userUuid = document.getElementById("userUuid").value;
             const videoSession = document.getElementById("videoSession").value;
@@ -406,7 +409,8 @@
                     "role": role,
                     "displayName": displayName,
                     "userUuid": userUuid,
-                    "videoSession": `/video_sessions/${videoSession}`
+                    "videoSession": `/video_sessions/${videoSession}`,
+                    "avatarUrl": avatarUrl
                 })
             })
                 .then(response => response.json())
