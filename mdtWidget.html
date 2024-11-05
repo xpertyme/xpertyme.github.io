@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Test widget page</h1>
+
+  <h2>Injection via script</h2>
+  <div id="mdtBookingWidget"></div>
+ 
+ <script>
+  const html = `
+   <booking-form
+                data-best-appointment-feature-enabled="false"
+                data-locale="de"
+                data-platform-id="MDT"
+                data-api-url=https://www.medityme.com
+                data-use-mixed-translations="true"
+                data-external-checkout-page="true"
+                data-widget-collapsed="false"
+                data-widget-accent-color="#e2cbd1"
+                data-widget-form-bg-color="#f2f2f2"
+                data-widget-form-container-bg-color="#ffffff"
+                data-widget-form-primary-text-color="#333333"
+                data-widget-form-link-color="#42A5F5"
+                data-widget-border-radius="8px"
+                data-widget-max-width="600"
+                data-widget-box-shadow-enabled="false"
+                data-expert-calendar-uuid="c70ae885-d9ac-4281-a20b-de5ec40d447b"
+                data-expert-uuid="b77a65a0-0da0-4449-ad0b-a890badf7c9d">
+</booking-form>
+
+    <script src="https://widgets.xpertyme.com/expert-online-booking-form/widget.js"></script>
+  `;
+  const scriptEl = document.createRange().createContextualFragment(html);
+  document.querySelector('#mdtBookingWidget').append(scriptEl);
+ </script>
+</body>
+</html>
