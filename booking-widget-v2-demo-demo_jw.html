@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image/x-icon" href="https://www.xpertyme.com/assets/img/icon/favicon-32x32.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <title>Booking widget v2</title>
+
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: "Roboto", serif;
+        }
+        html, body, h2 {
+            margin: 0;
+            padding: 0;
+        }
+        .widgets_box {
+            margin: 10px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+            display: flex;
+            gap: 30px;
+
+            @media screen and (max-width: 1024px) {
+                flex-direction: column;
+            }
+        }
+        .widgets_box_col {
+            flex: 1;
+        }
+        .widgets_box_title {
+            margin-bottom: 20px;
+        }
+        .widgets_element {
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<!-- Widget web element tag injection -->
+<div class="widgets">
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Target expert (popup view enabled)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="true"
+                            data-target-expert-uuid="7d2c9fb1-be51-42d4-b8d9-848cbd9133ca"
+                            data-api-url="https://demo.xpertyme.com"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Target expert (popup view disabled)</h2>
+            <widget-booking data-language="en"
+                            data-ui-popup-view="false"
+                            data-target-expert-uuid="7d2c9fb1-be51-42d4-b8d9-848cbd9133ca"
+                            data-api-url="https://demo.xpertyme.com"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Target expert (custom theme + popup view enabled)</h2>
+            <widget-booking data-language="de"
+                            data-api-url="https://demo.xpertyme.com"
+                            data-target-expert-uuid="7d2c9fb1-be51-42d4-b8d9-848cbd9133ca"
+                            data-ui-popup-view="true"
+                            data-ui-popup-view="false"
+                            data-ui-accent-color="darkseagreen"
+                            data-ui-widget-frame-background="#000"
+                            data-ui-accent-text-color="#fff"
+                            data-ui-back-link-color="darkseagreen"
+                            data-ui-input-text-color="#fff"
+                            data-ui-input-background-color="#141417"
+                            data-ui-input-border-color="#202020"
+                            data-ui-skeleton-primary-background-color="#141417"
+                            data-ui-skeleton-secondary-background-color="#222226"
+                            data-ui-booking-timeslot-text-color="#fff"
+                            data-ui-booking-timeslot-background-color="#141417"
+                            data-ui-booking-timeslot-range-slider-time-label-text-color="#333"
+                            data-ui-booking-timeslot-range-slider-time-label-background-color="#fff"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Target expert (preselected visit reason + popup view enabled)</h2>
+            <widget-booking data-language="en"
+                            data-ui-popup-view="true"
+                            data-api-url="https://demo.xpertyme.com"
+                            data-target-expert-uuid="7d2c9fb1-be51-42d4-b8d9-848cbd9133ca"
+                            data-visit-reason-uuid="b52201ea-3a0b-4bbb-ba57-167f89aab720"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Target expert (preselected visit reason + popup view enabled)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="true"
+                            data-api-url="https://demo.xpertyme.com"
+                            data-target-expert-uuid="7d2c9fb1-be51-42d4-b8d9-848cbd9133ca"
+                            data-visit-reason-uuid="1f6ec9b3-12c9-4d48-9ef5-5960884bc795"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Target expert (preselected service type + popup view enabled)</h2>
+            <widget-booking data-language="en"
+                            data-ui-popup-view="true"
+                            data-api-url="https://demo.xpertyme.com"
+                            data-target-expert-uuid="7d2c9fb1-be51-42d4-b8d9-848cbd9133ca"
+                            data-service-type-code="statutory"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Target expert (custom theme + popup view enabled)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="true"
+                            data-api-url="https://demo.xpertyme.com"
+                            data-target-expert-uuid="7d2c9fb1-be51-42d4-b8d9-848cbd9133ca"
+                            data-ui-accent-color="darkseagreen"
+                            data-ui-widget-frame-background="#000"
+                            data-ui-accent-text-color="#fff"
+                            data-ui-back-link-color="darkseagreen"
+                            data-ui-input-text-color="#fff"
+                            data-ui-input-background-color="#141417"
+                            data-ui-input-border-color="#202020"
+                            data-ui-skeleton-primary-background-color="#141417"
+                            data-ui-skeleton-secondary-background-color="#222226"
+                            data-ui-booking-timeslot-text-color="#fff"
+                            data-ui-booking-timeslot-background-color="#141417"
+                            data-ui-booking-timeslot-range-slider-time-label-text-color="#333"
+                            data-ui-booking-timeslot-range-slider-time-label-background-color="#fff"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+        <div class="widgets_box_col"></div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Available experts (popup view enabled)</h2>
+            <widget-booking data-language="en"
+                            data-ui-popup-view="true"
+                            data-api-url="https://demo.xpertyme.com"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Available experts (popup view disabled)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="false"
+                            data-api-url="https://demo.xpertyme.com"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Available experts (Search by expert first + popup view enabled)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="true"
+                            data-search-by-expert-first="true"
+                            data-api-url="https://demo.xpertyme.com"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Available experts (Search by expert first + popup view disabled)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="false"
+                            data-search-by-expert-first="true"
+                            data-api-url="https://demo.xpertyme.com"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Organization - WidgetOrgaTest (popup view enabled)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="true"
+                            data-api-url="https://demo.xpertyme.com"
+                            data-organization-uuid="493e4bb3-410a-4d11-b2c4-236f319e0ca8"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Organization - WidgetOrgaTest (popup view disabled)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="false"
+                            data-api-url="https://demo.xpertyme.com"
+                            data-organization-uuid="493e4bb3-410a-4d11-b2c4-236f319e0ca8"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+    </div>
+    <div class="widgets_box">
+        <div class="widgets_box_col">
+            <h2 class="widgets_box_title">Initialize widget failed case (example)</h2>
+            <widget-booking data-language="de"
+                            data-ui-popup-view="false"
+                            data-api-url="https://demo_invalid_url"
+                            class="widgets_element"
+            >
+            </widget-booking>
+        </div>
+        <div class="widgets_box_col"></div>
+    </div>
+</div>
+
+<!-- Inject script -->
+<script src="https://widgets.int.xpertyme.com/expert-booking/widget.js"></script>
+</body>
+</html>
