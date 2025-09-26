@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #callScreenWidgetContainer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+            background-color: gray;
+        }
+
+        video {
+            border: 2px solid red;
+        }
+    </style>
+</head>
+<body>
+<div id="callScreenWidgetContainer"></div>
+<script>
+    const visibleElements = JSON.stringify({
+        participantsPanel: {
+            enabled: false
+        },
+        waitingRoom: {
+            enabled: false
+        },
+        controlPanel: {
+            enabled: false
+        }
+    }).replace(/"/g, '&quot;'); // need to replace quotes "" to &quot;;
+
+    window.addEventListener('load', function() {
+        const postMessageHandler = (event) => {
+            switch (event.data?.type) {
+                case 'CALL_SCREEN_WIDGET_SESSION_CLOSED':
+                case 'CALL_SCREEN_WIDGET_SESSION_FINISHED':
+                case 'CALL_SCREEN_WIDGET_HUNG_UP':
+                case 'CALL_SCREEN_WIDGET_INITIALIZED':
+                case 'CALL_SCREEN_WIDGET_JOINED_THE_CALL':
+                case 'CALL_SCREEN_WIDGET_START_SESSION_ERROR':
+                case 'CALL_SCREEN_WIDGET_CALL_INITIALIZATION_FAILED':
+                case 'CALL_SCREEN_WIDGET_MUTE_SUCCESS':
+                case 'CALL_SCREEN_WIDGET_MUTE_ERROR':
+                case 'CALL_SCREEN_WIDGET_UNMUTE_SUCCESS':
+                case 'CALL_SCREEN_WIDGET_UNMUTE_ERROR':
+                case 'CALL_SCREEN_WIDGET_CAMERA_ON_SUCCESS':
+                case 'CALL_SCREEN_WIDGET_CAMERA_ON_ERROR':
+                case 'CALL_SCREEN_WIDGET_CAMERA_OFF_SUCCESS':
+                case 'CALL_SCREEN_WIDGET_CAMERA_OFF_ERROR':
+                case 'CALL_SCREEN_WIDGET_NEXT_CAMERA_SUCCESS':
+                case 'CALL_SCREEN_WIDGET_NEXT_CAMERA_ERROR':
+                case 'CALL_SCREEN_WIDGET_FINISH_SESSION_SUCCESS':
+                case 'CALL_SCREEN_WIDGET_FINISH_SESSION_ERROR':
+                case 'CALL_SCREEN_WIDGET_APPLY_LAYOUT_SUCCESS':
+                case 'CALL_SCREEN_WIDGET_APPLY_LAYOUT_ERROR':
+                case 'CALL_SCREEN_WIDGET_SOCKET_CONNECTION_FAILED':
+                    console.log(`Received message: ${event.data.type}`, event.data);
+                    break;
+                default:
+                    break;
+            }
+        };
+        const postMessageHandlerBound = postMessageHandler.bind(this);
+        window.addEventListener('message', postMessageHandlerBound);
+
+        const script = document.createElement('script');
+        script.src = "https://widgets.int.xpertyme.com/call-screen/widget.js";
+        script.onload = function() {
+            const widgetHtml = `<call-screen id="callScreen"
+                    data-video-session-id="567adec6-101c-43f9-9b42-fab1e4f133c3"
+                    data-participant-id="a441b9e9-ea11-4a93-b62a-97d9e62acfc6"
+                    data-auth-token="1d8807eb-f488-49ad-ba49-521125fa50a2"
+                    data-api-domain-name="https://call-api.k8s.xpertyme.com"
+                    data-layout="XPT"
+                    data-locale="en"
+                    data-primary-color="#0080FF"
+                    data-waiting-room-background-color="gray"
+                    data-session-title="Participant is here"
+                    data-visible-elements="${visibleElements}"
+                    data-autostart-call="true"
+                    data-auto-join-call="true"
+                ></call-screen>`;
+            const container = document.getElementById('callScreenWidgetContainer');
+            container.insertAdjacentHTML('beforeend', widgetHtml);
+        };
+        setTimeout(function() {
+            document.body.appendChild(script);
+        }, 10000);
+    });
+</script>
+</body>
+</html>
