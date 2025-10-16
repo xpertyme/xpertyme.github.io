@@ -22,13 +22,13 @@
 <script>
     const visibleElements = JSON.stringify({
         participantsPanel: {
-            enabled: false
+            enabled: true
         },
         waitingRoom: {
-            enabled: false
+            enabled: true
         },
         controlPanel: {
-            enabled: false
+            enabled: true
         }
     }).replace(/"/g, '&quot;'); // need to replace quotes "" to &quot;;
 
@@ -67,29 +67,36 @@
         const postMessageHandlerBound = postMessageHandler.bind(this);
         window.addEventListener('message', postMessageHandlerBound);
 
+        // Get session ID from localStorage
+        const videoSessionId = localStorage.getItem('videoSessionId');
+        if (!videoSessionId) {
+            alert('No session ID found. Please go back to the main page and enter a session ID.');
+        }
+
         const script = document.createElement('script');
-        script.src = "https://widgets.int.xpertyme.com/call-screen/widget.js";
-        script.onload = function() {
+        script.src = "https://widgets.dev.xpertyme.com/call-screen/widget.js";
+        script.onload = function () {
+            const autoJoinHost = localStorage.getItem('autoJoinHost') === 'true';
+            const layout = localStorage.getItem('layout') || 'XPT'; // Default to XPT if not set
             const widgetHtml = `<call-screen id="callScreen"
-                    data-video-session-id="567adec6-101c-43f9-9b42-fab1e4f133c3"
-                    data-participant-id="876102a4-2cb3-4b88-9288-ca4fa4a08dcc"
-                    data-auth-token="537ed295-08b6-4337-81b2-a89fa81b1566"
-                    data-api-domain-name="https://call-api.k8s.xpertyme.com"
-                    data-layout="XPT"
+                    data-video-session-id="${videoSessionId}"
+                    data-participant-id="${localStorage.getItem('hostParticipantId') || ''}"
+                    data-auth-token="${localStorage.getItem('hostAuthToken') || ''}"
+                    data-api-domain-name="https://call-api.dev.xpertyme.com"
+                    data-layout="${layout}"
                     data-locale="en"
                     data-primary-color="#0080FF"
                     data-waiting-room-background-color="gray"
                     data-session-title="Host is here"
                     data-visible-elements="${visibleElements}"
-                    data-autostart-call="true"
-                    data-auto-join-call="true"
+                    data-autostart-call="${autoJoinHost}"
+                    data-auto-join-call="${autoJoinHost}"
                 ></call-screen>`;
             const container = document.getElementById('callScreenWidgetContainer');
             container.insertAdjacentHTML('beforeend', widgetHtml);
         };
-        setTimeout(function() {
-            document.body.appendChild(script);
-        }, 10000);
+
+        document.body.appendChild(script);
     });
 </script>
 </body>

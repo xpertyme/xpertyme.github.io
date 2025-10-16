@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         #callScreenWidgetContainer {
             position: fixed;
@@ -12,7 +12,6 @@
             z-index: 10;
             background-color: gray;
         }
-
         video {
             border: 2px solid red;
         }
@@ -20,20 +19,17 @@
 </head>
 <body>
 <div id="callScreenWidgetContainer"></div>
-<script>
-    const visibleElements = JSON.stringify({
-        participantsPanel: {
-            enabled: false
-        },
-        waitingRoom: {
-            enabled: false
-        },
-        controlPanel: {
-            enabled: false
-        }
-    }).replace(/"/g, '&quot;'); // need to replace quotes "" to &quot;;
 
+<script>
     window.addEventListener('load', function() {
+        // Get session ID from localStorage
+        const videoSessionId = localStorage.getItem('videoSessionId');
+        if (!videoSessionId) {
+            alert('No session ID found. Please go back to the main page and enter a session ID.');
+            window.location.href = '/call-screen/';
+            return;
+        }
+
         const postMessageHandler = (event) => {
             switch (event.data?.type) {
                 case 'CALL_SCREEN_WIDGET_SESSION_CLOSED':
@@ -56,40 +52,55 @@
                 case 'CALL_SCREEN_WIDGET_FINISH_SESSION_SUCCESS':
                 case 'CALL_SCREEN_WIDGET_FINISH_SESSION_ERROR':
                 case 'CALL_SCREEN_WIDGET_APPLY_LAYOUT_SUCCESS':
-                case 'CALL_SCREEN_WIDGET_APPLY_LAYOUT_ERROR':
                 case 'CALL_SCREEN_WIDGET_SOCKET_CONNECTION_FAILED':
+                case 'CALL_SCREEN_WIDGET_APPLY_LAYOUT_ERROR':
                     console.log(`Received message: ${event.data.type}`, event.data);
                     break;
                 default:
                     break;
             }
         };
+        
         const postMessageHandlerBound = postMessageHandler.bind(this);
         window.addEventListener('message', postMessageHandlerBound);
 
+        const visibleElements = JSON.stringify({
+            participantsPanel: {
+                enabled: true
+            },
+            waitingRoom: {
+                enabled: true
+            },
+            controlPanel: {
+                enabled: true
+            }
+        }).replace(/"/g, '&quot;');
+
         const script = document.createElement('script');
-        script.src = "https://widgets.int.xpertyme.com/call-screen/widget.js";
+        script.src = "https://widgets.dev.xpertyme.com/call-screen/widget.js";
         script.onload = function() {
+            const autoJoinParticipant = localStorage.getItem('autoJoinParticipant') === 'true';
+            const layout = localStorage.getItem('layout') || 'XPT'; // Default to XPT if not set
             const widgetHtml = `<call-screen id="callScreen"
-                    data-video-session-id="567adec6-101c-43f9-9b42-fab1e4f133c3"
-                    data-participant-id="a441b9e9-ea11-4a93-b62a-97d9e62acfc6"
-                    data-auth-token="1d8807eb-f488-49ad-ba49-521125fa50a2"
-                    data-api-domain-name="https://call-api.k8s.xpertyme.com"
-                    data-layout="XPT"
+                    data-video-session-id="${videoSessionId}"
+                    data-participant-id="${localStorage.getItem('participantId') || ''}"
+                    data-auth-token="${localStorage.getItem('participantAuthToken') || ''}"
+                    data-api-domain-name="https://call-api.dev.xpertyme.com"
+                    data-layout="${layout}"
                     data-locale="en"
-                    data-primary-color="#0080FF"
+                    data-primary-color="#10B981"
                     data-waiting-room-background-color="gray"
-                    data-session-title="Participant is here"
+                    data-session-title="Participant"
                     data-visible-elements="${visibleElements}"
-                    data-autostart-call="true"
-                    data-auto-join-call="true"
-                ></call-screen>`;
+                    data-autostart-call="${autoJoinParticipant}"
+                    data-auto-join-call="${autoJoinParticipant}">
+                </call-screen>`;
+            
             const container = document.getElementById('callScreenWidgetContainer');
-            container.insertAdjacentHTML('beforeend', widgetHtml);
+            container.innerHTML = widgetHtml;
         };
-        setTimeout(function() {
-            document.body.appendChild(script);
-        }, 10000);
+
+        document.body.appendChild(script);
     });
 </script>
 </body>
