@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Screen Widget Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0080FF;
+            --primary-light: #E6F2FF;
+            --text: #1A1A1A;
+            --text-light: #666666;
+            --bg: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .card.host {
+            border-top: 4px solid var(--primary);
+        }
+
+        .card.participant {
+            border-top: 4px solid #10B981;
+        }
+
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .host .card-icon {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .participant .card-icon {
+            background-color: #D1FAE5;
+            color: #10B981;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 200px;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0066CC;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #0D9F74;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .cards {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .header h1 {
+                font-size: 1.875rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+        <h1 style="margin-bottom: 1.5rem;">Video Call Session</h1>
+        
+        <!-- Session ID Input -->
+        <div style="margin-bottom: 1.5rem;">
+            <label for="videoSessionId" style="display: block; text-align: left; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 500;">Session ID</label>
+            <input type="text" 
+                   id="videoSessionId" 
+                   placeholder="Enter a session ID" 
+                   style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; margin-bottom: 1rem;">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; text-align: left; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 500;">Layout</label>
+            <div style="display: flex; gap: 1rem;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="radio" name="layout" value="XPT" style="margin-right: 0.5rem;">
+                    <span>XPT</span>
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="radio" name="layout" value="TMB" style="margin-right: 0.5rem;">
+                    <span>TMB</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Host Credentials -->
+        <div class="credentials-section" style="background: #f8f9fa; padding: 1.25rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #eee;">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--primary);">Host Credentials</h3>
+            
+            <div style="margin-bottom: 1rem;">
+                <label for="hostParticipantId" style="display: block; text-align: left; margin-bottom: 0.5rem; color: var(--text-light); font-size: 0.9rem;">Host ID</label>
+                <input type="text" 
+                       id="hostParticipantId" 
+                       placeholder="Enter host ID" 
+                       style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; margin-bottom: 1rem;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label for="hostAuthToken" style="display: block; text-align: left; margin-bottom: 0.5rem; color: var(--text-light); font-size: 0.9rem;">Host Auth Token</label>
+                <input type="text" 
+                       id="hostAuthToken" 
+                       placeholder="Enter host auth token" 
+                       style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem;">
+            </div>
+            
+            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <input type="checkbox" 
+                       id="autoJoinHost" 
+                       style="margin-right: 0.5rem; width: 1rem; height: 1rem;">
+                <label for="autoJoinHost" style="color: var(--text-light); font-size: 0.9rem; cursor: pointer;">
+                    Auto-join as host on page load
+                </label>
+            </div>
+            
+            <button id="startAsHost" class="btn btn-primary" style="width: 100%;">Start as Host</button>
+        </div>
+
+        <!-- Participant Credentials -->
+        <div class="credentials-section" style="background: #f8f9fa; padding: 1.25rem; border-radius: 8px; border: 1px solid #eee;">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: #10B981;">Participant Credentials</h3>
+            
+            <div style="margin-bottom: 1rem;">
+                <label for="participantId" style="display: block; text-align: left; margin-bottom: 0.5rem; color: var(--text-light); font-size: 0.9rem;">Participant ID</label>
+                <input type="text" 
+                       id="participantId" 
+                       placeholder="Enter participant ID" 
+                       style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; margin-bottom: 1rem;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label for="participantAuthToken" style="display: block; text-align: left; margin-bottom: 0.5rem; color: var(--text-light); font-size: 0.9rem;">Auth Token</label>
+                <input type="text" 
+                       id="participantAuthToken"
+                       placeholder="Enter auth token" 
+                       style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; margin-bottom: 1rem;">
+            </div>
+            
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                <input type="checkbox" 
+                       id="autoJoinParticipant" 
+                       style="margin-right: 0.5rem; width: 1rem; height: 1rem;">
+                <label for="autoJoinParticipant" style="color: var(--text-light); font-size: 0.9rem; cursor: pointer;">
+                    Auto-join as participant on page load
+                </label>
+            </div>
+            
+            <button id="joinAsParticipant" class="btn btn-secondary" style="width: 100%;">Join as Participant</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Input elements
+        const sessionIdInput = document.getElementById('videoSessionId');
+        
+        // Host fields
+        const hostParticipantIdInput = document.getElementById('hostParticipantId');
+        const hostAuthTokenInput = document.getElementById('hostAuthToken');
+        
+        // Participant fields
+        const participantIdInput = document.getElementById('participantId');
+        const participantAuthTokenInput = document.getElementById('participantAuthToken');
+        
+        // Layout radio buttons
+        const layoutInputs = document.querySelectorAll('input[name="layout"]');
+        
+        // Load saved values if they exist
+        const savedSessionId = localStorage.getItem('videoSessionId') || '';
+        const savedHostParticipantId = localStorage.getItem('hostParticipantId') || '';
+        const savedHostAuthToken = localStorage.getItem('hostAuthToken') || '';
+        const savedParticipantId = localStorage.getItem('participantId') || '';
+        const savedAuthToken = localStorage.getItem('participantAuthToken') || '';
+        const savedAutoJoinHost = localStorage.getItem('autoJoinHost') === 'true';
+        const savedAutoJoinParticipant = localStorage.getItem('autoJoinParticipant') === 'true';
+        const savedLayout = localStorage.getItem('layout') || 'XPT'; // Default to XPT if not set
+        
+        // Set saved values
+        sessionIdInput.value = savedSessionId;
+        hostParticipantIdInput.value = savedHostParticipantId;
+        hostAuthTokenInput.value = savedHostAuthToken;
+        participantIdInput.value = savedParticipantId;
+        participantAuthTokenInput.value = savedAuthToken;
+        
+        // Set auto-join checkboxes
+        const autoJoinHostCheckbox = document.getElementById('autoJoinHost');
+        const autoJoinParticipantCheckbox = document.getElementById('autoJoinParticipant');
+        autoJoinHostCheckbox.checked = savedAutoJoinHost;
+        autoJoinParticipantCheckbox.checked = savedAutoJoinParticipant;
+        
+        // Set layout radio button
+        layoutInputs.forEach(input => {
+            if (input.value === savedLayout) {
+                input.checked = true;
+            } else {
+                input.checked = false;
+            }
+        });
+        
+        // Focus the session ID input
+        sessionIdInput.focus();
+        
+        // Function to validate UUID format
+        function isValidUUID(uuid) {
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            return uuid === '' || uuidRegex.test(uuid);
+        }
+
+        // Function to show error message for a field
+        function showError(input, message) {
+            // Remove any existing error
+            const existingError = input.nextElementSibling;
+            if (existingError && existingError.className === 'error-message') {
+                existingError.remove();
+            }
+            
+            if (message) {
+                const error = document.createElement('div');
+                error.className = 'error-message';
+                error.style.color = '#dc3545';
+                error.style.fontSize = '0.8rem';
+                error.style.marginTop = '0.25rem';
+                error.textContent = message;
+                input.parentNode.insertBefore(error, input.nextSibling);
+                input.style.borderColor = '#dc3545';
+            } else {
+                input.style.borderColor = '#ddd';
+            }
+        }
+
+        // Function to validate a field
+        function validateField(input, fieldName, isRequired = true) {
+            const value = input.value.trim();
+            
+            if (isRequired && !value) {
+                showError(input, `${fieldName} is required`);
+                return false;
+            }
+            
+            if (value && !isValidUUID(value)) {
+                showError(input, 'Please enter a valid UUID format');
+                return false;
+            }
+            
+            showError(input, '');
+            return true;
+        }
+
+        // Function to save all fields to localStorage
+        function saveAllFields() {
+            const fields = [
+                { input: sessionIdInput, key: 'videoSessionId', name: 'Session ID', required: true },
+                { input: hostParticipantIdInput, key: 'hostParticipantId', name: 'Host ID', required: true },
+                { input: hostAuthTokenInput, key: 'hostAuthToken', name: 'Host Auth Token', required: true },
+                { input: participantIdInput, key: 'participantId', name: 'Participant ID', required: true },
+                { input: participantAuthTokenInput, key: 'participantAuthToken', name: 'Auth Token', required: true }
+            ];
+            
+            fields.forEach(({ input, key, name, required }) => {
+                const value = input.value.trim();
+                if (value || required) {
+                    validateField(input, name, required);
+                }
+                localStorage.setItem(key, value);
+            });
+            
+            // Save auto-join preferences
+            localStorage.setItem('autoJoinHost', document.getElementById('autoJoinHost').checked);
+            localStorage.setItem('autoJoinParticipant', document.getElementById('autoJoinParticipant').checked);
+            
+            // Save layout preference
+            const selectedLayout = document.querySelector('input[name="layout"]:checked');
+            if (selectedLayout) {
+                localStorage.setItem('layout', selectedLayout.value);
+            }
+        }
+
+        // Handle start as host
+        document.getElementById('startAsHost').addEventListener('click', function() {
+            // Validate all required fields
+            const isSessionValid = validateField(sessionIdInput, 'Session ID', true);
+            const isHostIdValid = validateField(hostParticipantIdInput, 'Host ID', true);
+            const isHostTokenValid = validateField(hostAuthTokenInput, 'Host Auth Token', true);
+            
+            if (!isSessionValid || !isHostIdValid || !isHostTokenValid) {
+                return; // Validation failed, error messages are shown
+            }
+            
+            const videoSessionId = sessionIdInput.value.trim();
+            const hostParticipantId = hostParticipantIdInput.value.trim();
+            const hostAuthToken = hostAuthTokenInput.value.trim();
+            
+            // Save all fields to localStorage
+            saveAllFields();
+            
+            // Redirect to host page
+            window.location.href = '/call-screen/host.html';
+        });
+
+        // Handle join as participant
+        document.getElementById('joinAsParticipant').addEventListener('click', function() {
+            // Validate all required fields
+            const isSessionValid = validateField(sessionIdInput, 'Session ID', true);
+            const isParticipantIdValid = validateField(participantIdInput, 'Participant ID', true);
+            const isAuthTokenValid = validateField(participantAuthTokenInput, 'Auth Token', true);
+            
+            if (!isSessionValid || !isParticipantIdValid || !isAuthTokenValid) {
+                return; // Validation failed, error messages are shown
+            }
+            
+            const videoSessionId = sessionIdInput.value.trim();
+            const participantId = participantIdInput.value.trim();
+            const participantAuthToken = participantAuthTokenInput.value.trim();
+            
+            // Save all fields to localStorage
+            saveAllFields();
+            
+            // Redirect to participant page
+            window.location.href = '/call-screen/participant.html';
+        });
+        
+        // Handle Enter key in input fields
+        [sessionIdInput, hostParticipantIdInput, hostAuthTokenInput, participantIdInput, participantAuthTokenInput].forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (input === sessionIdInput) {
+                        hostParticipantIdInput.focus();
+                    } else if (input === hostParticipantIdInput) {
+                        hostAuthTokenInput.focus();
+                    } else if (input === hostAuthTokenInput) {
+                        document.getElementById('startAsHost').click();
+                    } else if (input === participantIdInput) {
+                        participantAuthTokenInput.focus();
+                    } else if (input === participantAuthTokenInput) {
+                        document.getElementById('joinAsParticipant').click();
+                    }
+                }
+            });
+        });
+
+        // Add validation on blur for all fields
+        function setupFieldValidation(input, fieldName, required = true) {
+            input.addEventListener('blur', () => validateField(input, fieldName, required));
+            input.addEventListener('input', () => {
+                // Clear error when user starts typing
+                if (input.style.borderColor === 'rgb(220, 53, 69)') {
+                    const value = input.value.trim();
+                    if (value && isValidUUID(value)) {
+                        showError(input, '');
+                    }
+                }
+                saveAllFields();
+            });
+        }
+
+        // Setup validation for all fields
+        setupFieldValidation(sessionIdInput, 'Session ID', true);
+        setupFieldValidation(hostParticipantIdInput, 'Host ID', true);
+        setupFieldValidation(hostAuthTokenInput, 'Host Auth Token', true);
+        setupFieldValidation(participantIdInput, 'Participant ID', true);
+        setupFieldValidation(participantAuthTokenInput, 'Auth Token', true);
+        
+        // Save auto-join preferences when checkboxes change
+        document.getElementById('autoJoinHost').addEventListener('change', saveAllFields);
+        document.getElementById('autoJoinParticipant').addEventListener('change', saveAllFields);
+        
+        // Save layout preference when changed
+        layoutInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.checked) {
+                    localStorage.setItem('layout', this.value);
+                }
+            });
+        });
+        
+        // Initialize UI
+        saveAllFields();
+    });
+</script>
+</body>
+</html>
