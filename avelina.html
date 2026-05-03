@@ -1,23 +1,56 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Avelina Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avelina Chat — Embed Example (production)</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; color: #1f2937; }
+    h1 { margin-bottom: 0.25rem; }
+    p.lead { color: #6b7280; margin-top: 0; }
+    code { background: #f3f4f6; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.9em; }
+  </style>
 </head>
-
 <body>
-  <h1>Avelina Test widget page</h1>
+  <h1>Avelina Chat widget</h1>
+  <p class="lead">
+    Production embed example. Replace the two placeholders below
+    (<code>YOUR_CHATBOT_ID</code> and <code>YOUR_API_KEY</code>) and host
+    this file on your own site — nothing else needs to change.
+  </p>
 
+  <p>
+    The chat opens from the floating button in the bottom-right corner.
+  </p>
+
+  <!--
+    1) Loads the widget bundle (UMD build) from the Avelina admin-portal.
+       The bundle self-registers the <avelina-chat> custom element on load.
+       No `type="module"` needed — UMD works as a plain script.
+  -->
   <script src="https://avelina.k8s.xpertyme.com/avelina-chat.js"></script>
-<avelina-chat
-  runtime-api-url="https://avelina-api.k8s.xpertyme.com"
-  chatbot-id="5399be0c-d6b1-4141-b2c9-d574dcc3ab5c"
-  token="ak_c383f750e4c08aad36d362a5793eedcaaccce03395e32fbf"
-></avelina-chat>
-</body>
 
+  <!--
+    2) Mounts the chat. Required attributes:
+       - runtime-api-url : the public Avelina runtime-api host
+                           (must allow this page's origin via CORS).
+       - chatbot-id      : the UUID of the chatbot in the admin portal.
+       - token           : the per-chatbot API key (starts with `ak_`).
+                           Generated when the chatbot is created and
+                           visible under Admin Portal → Chatbot →
+                           "Embed & Test" tab.
+       Optional attributes:
+       - welcome-message : first message shown by the bot.
+       - primary-color   : hex color for the launcher button + accent.
+       - theme           : JSON blob overriding multiple theme fields
+                           at once (per-attribute values win).
+  -->
+  <avelina-chat
+    runtime-api-url="https://avelina-api.k8s.xpertyme.com"
+    chatbot-id="5399be0c-d6b1-4141-b2c9-d574dcc3ab5c"
+    token="ak_c383f750e4c08aad36d362a5793eedcaaccce03395e32fbf"
+    welcome-message="Hi! How can I help you today?"
+    primary-color="#2563eb"
+  ></avelina-chat>
+</body>
 </html>
